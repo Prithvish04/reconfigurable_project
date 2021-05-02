@@ -13,6 +13,7 @@
 #include <hls_opencv.h>
 #include <ap_axi_sdata.h>
 
+
 // Image dimensions
 #define WIDTH 1280
 #define HEIGHT 720
@@ -24,18 +25,21 @@
 typedef ap_axiu<32,1,1,1> pixel_data;
 typedef hls::stream<pixel_data> pixel_stream;
 
-
 // Stream processing function
-
-
-
-//void rgb2gray(pixel_stream &src, pixel_stream &dst);
-
+void greyscale( pixel_stream&,  pixel_stream&);
+void gauss(pixel_stream&,  pixel_stream&);
+void convolute_x(pixel_stream&,  pixel_stream&, int32_t&);
+void convolute_y(pixel_stream&,  pixel_stream&, int32_t&);
+void sobel_filter(pixel_stream&, pixel_stream&, int32_t&, int32_t&, float&);
+void suppression(float&, pixel_stream&,  pixel_stream&);
+void threshold(pixel_stream &, pixel_stream &);
+void hystersis(pixel_stream &, pixel_stream &);
+void correction(pixel_stream &, pixel_stream &);
 
 // Image paths
-#define INPUT_IMG  "/home/prithvish/reconfigurable/examples/parrot.jpg"
-#define OUTPUT_IMG "/home/prithvish/reconfigurable/examples/out.png"
-#define RAW_OUTPUT_IMG "/home/prithvish/reconfigurable/examples/raw.png"
+#define INPUT_IMG  "C:/Users/HashPac/Desktop/School/Master/Q2/Reconfigurable_Computing/Lab/PYNQ-Z2_lab2020/examples/parrot.jpg"
+#define OUTPUT_IMG "C:/Users/HashPac/Desktop/School/Master/Q2/Reconfigurable_Computing/Lab/PYNQ-Z2_lab2020/examples/output.png"
+#define RAW_OUTPUT_IMG "C:/Users/HashPac/Desktop/School/Master/Q2/Reconfigurable_Computing/Lab/PYNQ-Z2_lab2020/examples/raw_output.png"
 
 
 #endif // INC_H

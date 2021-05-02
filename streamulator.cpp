@@ -3,7 +3,6 @@
  */
 
 #include "streamulator.h"
-#include "final.h"
 
 
 /* Load image from file into pixel stream
@@ -38,27 +37,24 @@ void loadStream(const std::string &filename, pixel_stream &stream, int frames)
  * src - source (input) stream
  * dst - destination (output) stream
  */
-void processStream(pixel_stream &src, pixel_stream &dst)
+void processStream(pixel_stream &src ,pixel_stream &dst)
 {
-	// Call stream processing function
-//	while (!src.empty())
-//		rgb2gray(src, dst);
+	pixel_stream grey, blur, sobel, conv_x, conv_y, suppress, thres, final;
+	float angle;
+	int32_t ix, iy;
 
-
-    pixel_stream grey, gaussian, conv, suppress, thres;
-    float angle;
-
-    while (!src.empty()){
-            greyscale(src, grey);
-            gauss(grey, gaussian);
-            angle = sobel_filter(gaussian, conv);
-            suppression(angle, conv, suppress);
-            threshold(suppress, thres);
-            hystersis(thres, dst);
-
-    }
+	while (!src.empty()){
+		greyscale(src, grey);
+		gauss(grey, blur);
+		convolute_x(blur, conv_x, ix);
+		convolute_y(conv_x, conv_y, iy);
+		sobel_filter(conv_y, sobel, ix, iy, angle);
+		suppression(angle, sobel, suppress);
+		threshold(suppress, thres);
+		hystersis(thres, final);
+		correction(final, dst);
+	}
 }
-
 
 /* Save raw pixel stream to file
  *
@@ -161,15 +157,10 @@ int main()
 	pixel_stream procStream;
 	pixel_stream dstStream;
 
-
 	loadStream(INPUT_IMG, srcStream, FRAMES+2);
-
 	processStream(srcStream, procStream);
-
 	saveRawStream(procStream, dstStream, RAW_OUTPUT_IMG);
-
 	saveValidStream(dstStream, OUTPUT_IMG, FRAMES);
-
 
 	return 0;
 }
